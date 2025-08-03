@@ -195,7 +195,7 @@
             </div>
         </div>
     </div>
-    <div class="footer" id="footer" onclick="loadTapData()">Pints: ¥1600, Half Pints ¥1000</div>
+    <div class="footer" id="footer" onclick="loadTapData()">Pints: ¥1600 / Half Pints: ¥1000</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js"></script>
@@ -296,6 +296,12 @@
                         beerColumn.innerHTML += html;
                     }
                 });
+
+                const priceData = results.data.filter(row => row['Standard Price Note'].trim())
+                const footer = document.getElementById('footer');
+                priceData.forEach(row => {
+                    footer.innerHTML = row['Standard Price Note'];
+                })
 
                 scaleTapBoard();
             }
