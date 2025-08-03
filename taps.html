@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full Monty Tap List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Rock+Salt&family=Short+Stack&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Roboto Mono', monospace;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .chalkboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #2f2f2f;
+            border: 8px solid #654321;
+            border-radius: 1rem;
+            padding: 1.5rem 3vw;
+            width: 100vw;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #facc15;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+        h1 img {
+            height: 48px;
+        }
+        .tap-board {
+            flex: 1;
+            display: flex;
+            overflow: visible;
+            gap: 2rem;
+        }
+        .tap-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-bottom: 1rem;
+        }
+        .tap-column-header {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fcd34d;
+            margin-bottom: 1rem;
+            text-decoration: underline;
+        }
+        .tap-col {
+            position: relative;
+            background: linear-gradient(135deg, #264d34 0%, #1f3b29 100%), url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+            padding: 1.5rem 1rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: inset 0 0 10px #00000099;
+            display: flex;
+            align-items: flex-start;
+            min-height: 120px;
+            border: 1px solid #3e5e4a;
+            background-size: cover;
+            margin-bottom: 1rem;
+        }
+        .tap-logo {
+            width: 80px;
+            height: 80px;
+            background: #555;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            border: 2px solid #facc15;
+        }
+        .tap-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .tap-details {
+            flex: 1;
+        }
+        .tap-name {
+            font-family: 'Short Stack', cursive;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .tap-description {
+            margin-top: 0.3rem;
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+        .tap-style,
+        .tap-abv {
+            font-size: 0.9rem;
+            color: #bbb;
+        }
+        .tap-price {
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #facc15;
+        }
+        .tap-countries {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+        .flag-badge {
+            font-size: 32px;
+            background: #fcd34d;
+            color: #92400e;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 4px #b45309aa;
+            user-select: none;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tap-number {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background-color: #111827;
+            color: #facc15;
+            font-weight: bold;
+            font-size: 1.25rem;
+            height: 2.25rem;
+            min-width: 2.25rem;
+            padding: 0 0.6rem;
+            border-radius: 9999px;
+            box-shadow: 0 0 6px #000000aa;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .tap-board-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: visible;
+            position: relative;
+        }
+        .tap-board-scaler {
+            width: 100%;
+            max-height: calc(100vh - 12rem);
+            transform-origin: top;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div class="chalkboard">
+    <h1><img src="logo.jpg" alt="Full Monty Logo"> Full Monty</h1>
+    <div class="tap-board-wrapper">
+        <div class="tap-board-scaler">
+            <div class="tap-board">
+                <div class="tap-column">
+                    <div class="tap-column-header" id="tap-cider-header">Cider</div>
+                    <div id="cider-column"></div>
+                </div>
+                <div class="tap-column">
+                    <div class="tap-column-header" id="tap-beer-header">Beer</div>
+                    <div id="beer-column"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer" id="footer" onclick="loadTapData()">Pints: ¥1600, Half Pints ¥1000</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js"></script>
+<script>
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQEmwx6KHWzzdDpsSCw6LNg8LLwEE1eftKKSqycOOCWidYITkFOVDpmJ1meNcvSwE4-pzWr_/pub?output=csv';
+
+    function flagEmoji(code) {
+        const OFFSET = 127397;
+        return [...code.toUpperCase()].map(c =>
+            String.fromCodePoint(c.charCodeAt(0) + OFFSET)
+        ).join('');
+    }
+
+    function renderFlagBadges(countriesStr) {
+        if (!countriesStr) return "";
+        const codes = countriesStr.split(',').map(c => c.trim().toUpperCase());
+        return codes.map(code => {
+            const flag = flagEmoji(code);
+            return `<span class="flag-badge" aria-label="${code} flag">${flag}</span>`;
+        }).join("");
+    }
+
+    function getLogoElement(item) {
+        const logo = item.Logo?.trim();
+        if (logo) {
+            return `<div class="tap-logo"><img src="${logo}" alt="Logo"></div>`;
+        }
+        const emoji = item.Type.toLowerCase().includes("cider") ? '🍎' : '🍺';
+        return `<div class="tap-logo">${emoji}</div>`;
+    }
+
+    function renderTapItem(item) {
+        const countries = `<div class="tap-countries">${renderFlagBadges(item['Country'] || item['Countries'] || '')}</div>`;
+        const tapNumber = item['Tap Number'] ? `<div class=\"tap-number\">${item['Tap Number']}</div>` : '';
+        const logo = getLogoElement(item);
+        const price = item['Price Info']?.trim();
+        return `
+        <div class="tap-col">
+          ${tapNumber}
+          ${countries}
+          ${logo}
+          <div class="tap-details">
+            <div class="tap-name">${item.Name}</div>
+            <div class="tap-description">${item.Description || ''}</div>
+            <div class="tap-style">${item.Style ? 'Style: ' + item.Style : ''}</div>
+            <div class="tap-abv">${item.ABV ? 'ABV: ' + item.ABV + '%' : ''}</div>
+            ${price ? `<div class="tap-price">${price}</div>` : ''}
+          </div>
+        </div>`;
+    }
+
+    function scaleTapBoard() {
+        const chalkboard = document.querySelector('.chalkboard');
+        const header = document.querySelector('h1');
+        const beer_header = document.getElementById('tap-beer-header');
+        const cider_header = document.getElementById('tap-cider-header');
+        const footer = document.querySelector('.footer');
+        const cider = document.getElementById('cider-column');
+        const beer = document.getElementById('beer-column');
+        const tapBoard = document.querySelector('.tap-board-scaler');
+
+        const availableHeight = chalkboard.clientHeight - header.offsetHeight - footer.offsetHeight - 100 - Math.max(beer_header.offsetHeight, cider_header.offsetHeight);
+        const ciderHeight = cider.scrollHeight;
+        const beerHeight = beer.scrollHeight;
+        const maxHeight = Math.max(ciderHeight, beerHeight);
+
+        if (maxHeight > availableHeight) {
+            const scale = availableHeight / maxHeight;
+            tapBoard.style.transform = `scale(${scale})`;
+            tapBoard.style.transformOrigin = 'top';
+            tapBoard.style.overflowY = 'visible';
+        } else {
+            tapBoard.style.transform = 'scale(1)';
+        }
+    }
+
+    window.addEventListener('resize', scaleTapBoard);
+
+
+
+    function loadTapData() {
+        Papa.parse(sheetURL, {
+            download: true,
+            header: true,
+            complete: function(results) {
+                const data = results.data.filter(row => row.Name);
+                const ciderColumn = document.getElementById('cider-column');
+                const beerColumn = document.getElementById('beer-column');
+
+                ciderColumn.innerHTML = '';
+                beerColumn.innerHTML = '';
+
+                data.forEach(item => {
+                    const html = renderTapItem(item);
+                    if (item.Type.toLowerCase().includes("cider")) {
+                        ciderColumn.innerHTML += html;
+                    } else {
+                        beerColumn.innerHTML += html;
+                    }
+                });
+
+                scaleTapBoard();
+            }
+        });
+    }
+
+    loadTapData();
+    setInterval(loadTapData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
