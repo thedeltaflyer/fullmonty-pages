@@ -56,7 +56,7 @@
         }
         .tap-column-header {
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 3rem;
             font-weight: bold;
             color: #fcd34d;
             margin-bottom: 1rem;
@@ -114,12 +114,12 @@
             margin-top: 0.5rem;
             font-size: 0.95rem;
         }
-        .footer {
-            margin-top: 2rem;
-            text-align: center;
-            font-size: 1.1rem;
-            color: #facc15;
-        }
+        /*.footer {*/
+        /*    margin-top: 2rem;*/
+        /*    text-align: center;*/
+        /*    font-size: 1.1rem;*/
+        /*    color: #facc15;*/
+        /*}*/
         .tap-countries {
             position: absolute;
             top: 0.5rem;
@@ -180,22 +180,20 @@
 </head>
 <body>
 <div class="chalkboard">
-    <h1><img src="logo.jpg" alt="Full Monty Logo"> Full Monty</h1>
     <div class="tap-board-wrapper">
         <div class="tap-board-scaler">
             <div class="tap-board">
                 <div class="tap-column">
-                    <div class="tap-column-header" id="tap-cider-header">Cider</div>
+                    <div class="tap-column-header" id="tap-cider-header">CIDER</div>
                     <div id="cider-column"></div>
                 </div>
                 <div class="tap-column">
-                    <div class="tap-column-header" id="tap-beer-header">Beer</div>
+                    <div class="tap-column-header" id="tap-beer-header">BEER</div>
                     <div id="beer-column"></div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="footer" id="footer" onclick="loadTapData()">Pints: ¥1600 / Half Pints: ¥1000</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js"></script>
@@ -227,7 +225,7 @@
         return `<div class="tap-logo">${emoji}</div>`;
     }
 
-    function renderTapItem(item) {
+    function renderTapItem(item, priceValue) {
         const countries = `<div class="tap-countries">${renderFlagBadges(item['Country'] || item['Countries'] || '')}</div>`;
         const tapNumber = item['Tap Number'] ? `<div class=\"tap-number\">${item['Tap Number']}</div>` : '';
         const logo = getLogoElement(item);
@@ -242,22 +240,20 @@
             <div class="tap-description">${item.Description || ''}</div>
             <div class="tap-style">${item.Style ? 'Style: ' + item.Style : ''}</div>
             <div class="tap-abv">${item.ABV ? 'ABV: ' + item.ABV + '%' : ''}</div>
-            ${price ? `<div class="tap-price">${price}</div>` : ''}
+            ${price ? `<div class="tap-price">${price}</div>` : priceValue}
           </div>
         </div>`;
     }
 
     function scaleTapBoard() {
         const chalkboard = document.querySelector('.chalkboard');
-        const header = document.querySelector('h1');
         const beer_header = document.getElementById('tap-beer-header');
         const cider_header = document.getElementById('tap-cider-header');
-        const footer = document.querySelector('.footer');
         const cider = document.getElementById('cider-column');
         const beer = document.getElementById('beer-column');
         const tapBoard = document.querySelector('.tap-board-scaler');
 
-        const availableHeight = chalkboard.clientHeight - header.offsetHeight - footer.offsetHeight - 100 - Math.max(beer_header.offsetHeight, cider_header.offsetHeight);
+        const availableHeight = chalkboard.clientHeight - Math.max(beer_header.offsetHeight, cider_header.offsetHeight) - 50;
         const ciderHeight = cider.scrollHeight;
         const beerHeight = beer.scrollHeight;
         const maxHeight = Math.max(ciderHeight, beerHeight);
@@ -285,23 +281,23 @@
                 const ciderColumn = document.getElementById('cider-column');
                 const beerColumn = document.getElementById('beer-column');
 
+                const priceData = results.data.filter(row => row['Standard Price Note'].trim())
+                let priceValue = ''
+                priceData.forEach(row => {
+                   priceValue = row['Standard Price Note'];
+                })
+
                 ciderColumn.innerHTML = '';
                 beerColumn.innerHTML = '';
 
                 data.forEach(item => {
-                    const html = renderTapItem(item);
+                    const html = renderTapItem(item, priceValue);
                     if (item.Type.toLowerCase().includes("cider")) {
                         ciderColumn.innerHTML += html;
                     } else {
                         beerColumn.innerHTML += html;
                     }
                 });
-
-                const priceData = results.data.filter(row => row['Standard Price Note'].trim())
-                const footer = document.getElementById('footer');
-                priceData.forEach(row => {
-                    footer.innerHTML = row['Standard Price Note'];
-                })
 
                 scaleTapBoard();
             }
