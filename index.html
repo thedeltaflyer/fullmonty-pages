@@ -185,11 +185,11 @@
             <div class="tap-board">
                 <div class="tap-column">
                     <div class="tap-column-header" id="tap-cider-header">CIDER</div>
-                    <div id="cider-column"></div>
+                    <div id="cider-column"><div style="text-align: center">Loading Ciders...</div></div>
                 </div>
                 <div class="tap-column">
                     <div class="tap-column-header" id="tap-beer-header">BEER</div>
-                    <div id="beer-column"></div>
+                    <div id="beer-column"><div style="text-align: center">Loading Beers...</div></div>
                 </div>
             </div>
         </div>
@@ -305,7 +305,7 @@
     }
 
     loadTapData();
-    setInterval(loadTapData, 5 * 60 * 1000);
+    setInterval(loadTapData, 60 * 1000);
 </script>
 </body>
 </html>
