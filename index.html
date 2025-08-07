@@ -87,6 +87,7 @@
             justify-content: center;
             margin-right: 1rem;
             border: 2px solid #facc15;
+            font-size: 4em;
         }
         .tap-logo img {
             max-width: 100%;
@@ -97,7 +98,7 @@
         }
         .tap-name {
             font-family: 'Short Stack', cursive;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: bold;
         }
         .tap-description {
@@ -111,7 +112,7 @@
             color: #bbb;
         }
         .tap-price {
-            margin-top: 0.5rem;
+            margin-top: 1rem;
             font-size: 0.95rem;
         }
         /*.footer {*/
@@ -237,9 +238,8 @@
           ${logo}
           <div class="tap-details">
             <div class="tap-name">${item.Name}</div>
+            <div style="display: flex; justify-content: space-between;"><span class="tap-style">${item.Style ? 'Style: ' + item.Style : ''}</span><span class="tap-abv">${item.ABV ? 'ABV: ' + item.ABV + '%' : ''}</span></div>
             <div class="tap-description">${item.Description || ''}</div>
-            <div class="tap-style">${item.Style ? 'Style: ' + item.Style : ''}</div>
-            <div class="tap-abv">${item.ABV ? 'ABV: ' + item.ABV + '%' : ''}</div>
             ${price ? `<div class="tap-price">${price}</div>` : priceValue}
           </div>
         </div>`;
@@ -291,11 +291,13 @@
                 beerColumn.innerHTML = '';
 
                 data.forEach(item => {
-                    const html = renderTapItem(item, priceValue);
-                    if (item.Type.toLowerCase().includes("cider")) {
-                        ciderColumn.innerHTML += html;
-                    } else {
-                        beerColumn.innerHTML += html;
+                    if (item.Available === "TRUE") {
+                        const html = renderTapItem(item, priceValue);
+                        if (item.Type.toLowerCase().includes("cider")) {
+                            ciderColumn.innerHTML += html;
+                        } else {
+                            beerColumn.innerHTML += html;
+                        }
                     }
                 });
 
