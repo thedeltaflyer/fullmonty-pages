@@ -270,7 +270,14 @@
 
     window.addEventListener('resize', scaleTapBoard);
 
-
+    function escapeHTML(str) {
+        return str
+            .replace(/&/g, '&amp;') // Replace ampersand
+            .replace(/</g, '&lt;')  // Replace less than
+            .replace(/>/g, '&gt;')  // Replace greater than
+            .replace(/"/g, '&quot;') // Replace double quote
+            .replace(/'/g, '&apos;'); // Replace single quote
+    }
 
     function loadTapData() {
         Papa.parse(sheetURL, {
@@ -292,6 +299,9 @@
 
                 data.forEach(item => {
                     if (item.Available === "TRUE") {
+                        for (const key in item) {
+                            item[key] = escapeHTML(item[key]);
+                        }
                         const html = renderTapItem(item, priceValue);
                         if (item.Type.toLowerCase().includes("cider")) {
                             ciderColumn.innerHTML += html;
