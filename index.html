@@ -64,18 +64,20 @@
             margin-bottom: 1rem;
             text-decoration: underline;
         }
-        .tap-col {
+        .tap-item {
             position: relative;
             background: linear-gradient(135deg, #264d34 0%, #1f3b29 100%), url('https://www.transparenttextures.com/patterns/asfalt-light.png');
             padding: 1.5rem 1rem 1rem;
             border-radius: 0.5rem;
             box-shadow: inset 0 0 10px #00000099;
-            display: flex;
-            align-items: flex-start;
             min-height: 120px;
             border: 1px solid #3e5e4a;
             background-size: cover;
             margin-bottom: 1rem;
+        }
+        .tap-col {
+            display: flex;
+            align-items: flex-start;
         }
         .tap-logo {
             width: 80px;
@@ -110,12 +112,16 @@
         }
         .tap-style,
         .tap-abv {
-            font-size: 0.9rem;
-            color: #bbb;
+            font-size: 1rem;
+            /*color: #bbb;*/
         }
         .tap-price {
+            position: absolute;
+            bottom: 0.5rem;
+            width: 100%;
             margin-top: 1rem;
             font-size: 0.95rem;
+            text-align: center;
         }
         /*.footer {*/
         /*    margin-top: 2rem;*/
@@ -179,6 +185,10 @@
             display: flex;
             justify-content: center;
         }
+        .price-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -234,16 +244,18 @@
         const logo = getLogoElement(item);
         const price = item['Price Info']?.trim();
         return `
+        <div class="tap-item">
         <div class="tap-col">
           ${tapNumber}
           ${countries}
           ${logo}
           <div class="tap-details">
             <div class="tap-name">${item.Name}</div>
-            <div style="display: flex; justify-content: space-between;"><span class="tap-style">${item.Style ? 'Style: ' + item.Style : ''}</span><span class="tap-abv">${item.ABV ? 'ABV: ' + item.ABV + '%' : ''}</span></div>
+            <div style="display: flex; justify-content: space-between;"><span class="tap-style">${item.Style ? item.Style : ''}</span><span class="tap-abv">${item.ABV ? 'ABV: ' + item.ABV + '%' : ''}</span></div>
             <div class="tap-description">${item.Description || ''}</div>
-            ${price ? `<div class="tap-price">${price}</div>` : priceValue}
           </div>
+        </div>
+        <div class="tap-price">${formatPrice(price ? price : priceValue)}</div>
         </div>`;
     }
 
@@ -270,8 +282,6 @@
         }
     }
 
-    window.addEventListener('resize', scaleTapBoard);
-
     function escapeHTML(str) {
         return str
             .replace(/&/g, '&amp;') // Replace ampersand
@@ -279,6 +289,10 @@
             .replace(/>/g, '&gt;')  // Replace greater than
             .replace(/"/g, '&quot;') // Replace double quote
             .replace(/'/g, '&apos;'); // Replace single quote
+    }
+
+    function formatPrice(price) {
+        return price.replace(/¥\d+/g, function(x) {return '<span class="price-text">' + x + '</span>'});
     }
 
     function loadTapData() {
@@ -313,13 +327,26 @@
                     }
                 });
 
+                window._lastUpdated = new Date();
+
                 scaleTapBoard();
             }
         });
     }
 
-    loadTapData();
-    setInterval(loadTapData, 60 * 1000);
+    function watchdog() {
+        // If the data hasn't been updated in the last 2 minutes, reload the page
+        if (window._lastUpdated && new Date() - window._lastUpdated > 2 * 60 * 1000) {
+            window.location.reload(true);
+        }
+    }
+
+    loadTapData(); // Do the initial load
+
+    setInterval(loadTapData, 60 * 1000); // Set up the interval to refresh the data every minute
+    setInterval(watchdog, 90 * 1000);  // Set up the interval to trigger the watchdog every 1.5 minutes
+
+    window.addEventListener('resize', scaleTapBoard); // Set up the event listener for window resize
 </script>
 </body>
 </html>
