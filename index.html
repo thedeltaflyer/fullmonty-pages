@@ -2,352 +2,423 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Full Monty Tap List</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Rock+Salt&family=Short+Stack&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Rock+Salt&family=Short+Stack:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Roboto Mono', monospace;
-            background: #1a1a1a;
-            color: #fff;
+        :root {
+            --bg: #1a1a1a;
+            --board: #2f2f2f;
+            --frame: #654321;
+            --accent: #facc15;
+            --accent-2: #fcd34d;
+            --accent-3: #b45309;
+            --ink: #fff;
+            --muted: #ddd;
+            --card-1: #264d34;
+            --card-2: #1f3b29;
+            --card-border: #3e5e4a;
+            --chip-bg: #111827;
         }
+
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            display: grid;
+            grid-template-rows: 1fr;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Roboto Mono', monospace;
+            overflow: hidden; /* wall-display style */
+        }
+
         .chalkboard {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: #2f2f2f;
-            border: 8px solid #654321;
+            display: grid;
+            grid-template-rows: 1fr;
+            background: var(--board);
+            border: 8px solid var(--frame);
             border-left: none;
             border-right: none;
             border-radius: 1rem;
-            padding: 1.5rem 3vw;
+            padding: 0 3vw 1.5rem;
             width: 100vw;
-            height: 100vh;
             box-sizing: border-box;
         }
-        h1 {
-            text-align: center;
-            color: #facc15;
+
+        .tap-board-wrapper {
+            position: relative;
+            overflow: visible;
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 1rem;
-        }
-        h1 img {
-            height: 48px;
-        }
-        .tap-board {
-            flex: 1;
-            display: flex;
-            overflow: visible;
-            gap: 2rem;
-        }
-        .tap-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding-bottom: 1rem;
-        }
-        .tap-column-header {
-            text-align: center;
-            font-size: 3rem;
-            font-weight: bold;
-            color: #fcd34d;
-            margin-bottom: 1rem;
-            text-decoration: underline;
-        }
-        .tap-item {
-            position: relative;
-            background: linear-gradient(135deg, #264d34 0%, #1f3b29 100%), url('https://www.transparenttextures.com/patterns/asfalt-light.png');
-            padding: 1.5rem 1rem 1rem;
-            border-radius: 0.5rem;
-            box-shadow: inset 0 0 10px #00000099;
-            min-height: 120px;
-            border: 1px solid #3e5e4a;
-            background-size: cover;
-            margin-bottom: 1rem;
-        }
-        .tap-col {
-            display: flex;
             align-items: flex-start;
         }
+
+        .tap-board-scaler {
+            /* remove max-height to avoid clipping */
+            transform-origin: top center;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            height: auto; /* JS will set an explicit height matching the scaled content */
+            overflow: visible;
+        }
+
+        .tap-board {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .tap-column {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem; /* spacing between tap items */
+            padding-bottom: 1rem;
+        }
+
+        .tap-column-header {
+            text-align: center;
+            font-size: clamp(1.75rem, 2vw + 1rem, 3rem);
+            font-weight: 700;
+            color: var(--accent-2);
+            margin: 0.25rem 0; /* tight gap above/below */
+            text-decoration: underline;
+            letter-spacing: 0.06em;
+        }
+
+        .tap-item {
+            position: relative;
+            background: linear-gradient(135deg, var(--card-1) 0%, var(--card-2) 100%), url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+            background-size: cover;
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            box-shadow: inset 0 0 10px #00000099;
+            padding: 1.5rem 1rem 1rem;
+            min-height: 120px;
+            margin-bottom: 0.5rem; /* extra gap between items */
+        }
+
+        .tap-col {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
         .tap-logo {
             width: 80px;
             height: 80px;
             background: #555;
+            border: 2px solid var(--accent);
             border-radius: 0.5rem;
+            display: grid;
+            place-items: center;
             overflow: hidden;
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            border: 2px solid #facc15;
-            font-size: 4em;
+            font-size: 2.5rem;
         }
-        .tap-logo img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-        .tap-details {
-            flex: 1;
-        }
+        .tap-logo img { max-width: 100%; max-height: 100%; display: block; }
+
+        .tap-details { min-width: 0; }
+
         .tap-name {
             font-family: 'Short Stack', cursive;
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: clamp(1.25rem, 1vw + 1rem, 2rem);
+            font-weight: 700;
+            line-height: 1.2;
         }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            font-size: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tap-style { opacity: 0.95; }
+        .tap-abv { opacity: 0.95; }
+
         .tap-description {
             margin-top: 0.3rem;
             margin-bottom: 1.2rem;
             font-size: 0.95rem;
-            color: #ddd;
+            color: var(--muted);
         }
-        .tap-style,
-        .tap-abv {
-            font-size: 1rem;
-            /*color: #bbb;*/
-        }
+
         .tap-price {
             position: absolute;
+            inset-inline: 0;
             bottom: 0.5rem;
-            width: 100%;
             margin-top: 1rem;
             font-size: 0.95rem;
             text-align: center;
         }
-        /*.footer {*/
-        /*    margin-top: 2rem;*/
-        /*    text-align: center;*/
-        /*    font-size: 1.1rem;*/
-        /*    color: #facc15;*/
-        /*}*/
+
+        .price-text { font-size: 1.2rem; font-weight: 700; }
+
         .tap-countries {
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
-            display: flex;
+            display: inline-flex; /* horizontal flags */
             gap: 0.25rem;
             z-index: 10;
         }
+
         .flag-badge {
             font-size: 32px;
-            background: #fcd34d;
+            background: var(--accent-2);
             color: #92400e;
             padding: 0.15rem 0.4rem;
             border-radius: 0.5rem;
-            box-shadow: 0 0 4px #b45309aa;
-            user-select: none;
+            box-shadow: 0 0 4px color-mix(in srgb, var(--accent-3), transparent 33%);
             line-height: 1;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            user-select: none;
         }
+
         .tap-number {
             position: absolute;
             top: 0.5rem;
             left: 0.5rem;
-            background-color: #111827;
-            color: #facc15;
-            font-weight: bold;
-            font-size: 1.25rem;
+            background: var(--chip-bg);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.05rem;
             height: 2.25rem;
             min-width: 2.25rem;
             padding: 0 0.6rem;
             border-radius: 9999px;
+            display: grid;
+            place-items: center;
             box-shadow: 0 0 6px #000000aa;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
             white-space: nowrap;
         }
-        .tap-board-wrapper {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            overflow: visible;
-            position: relative;
-        }
-        .tap-board-scaler {
-            width: 100%;
-            max-height: calc(100vh - 12rem);
-            transform-origin: top;
-            display: flex;
-            justify-content: center;
-        }
-        .price-text {
-            font-size: 1.2rem;
-            font-weight: bold;
+
+        @media (max-width: 900px) {
+            .tap-board { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-<div class="chalkboard">
-    <div class="tap-board-wrapper">
-        <div class="tap-board-scaler">
-            <div class="tap-board">
-                <div class="tap-column">
-                    <div class="tap-column-header" id="tap-cider-header">CIDER</div>
-                    <div id="cider-column"><div style="text-align: center">Loading Ciders...</div></div>
+<main class="chalkboard">
+    <section class="tap-board-wrapper">
+        <div class="tap-board-scaler" id="boardScaler">
+            <div class="tap-board" role="list" aria-label="Tap list">
+                <div class="tap-column" aria-labelledby="tap-cider-header">
+                    <h2 class="tap-column-header" id="tap-cider-header">CIDER</h2>
+                    <div id="cider-column"><div style="text-align:center">Loading Ciders…</div></div>
                 </div>
-                <div class="tap-column">
-                    <div class="tap-column-header" id="tap-beer-header">BEER</div>
-                    <div id="beer-column"><div style="text-align: center">Loading Beers...</div></div>
+                <div class="tap-column" aria-labelledby="tap-beer-header">
+                    <h2 class="tap-column-header" id="tap-beer-header">BEER</h2>
+                    <div id="beer-column"><div style="text-align:center">Loading Beers…</div></div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
+</main>
 
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js" defer></script>
 <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQEmwx6KHWzzdDpsSCw6LNg8LLwEE1eftKKSqycOOCWidYITkFOVDpmJ1meNcvSwE4-pzWr_/pub?gid=0&single=true&output=csv';
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQEmwx6KHWzzdDpsSCw6LNg8LLwEE1eftKKSqycOOCWidYITkFOVDpmJ1meNcvSwE4-pzWr_/pub?gid=0&single=true&output=csv';
 
-    function flagEmoji(code) {
+    const memo = (fn) => { const cache = new Map(); return (k) => cache.has(k) ? cache.get(k) : (cache.set(k, fn(k)), cache.get(k)); };
+
+    const flagEmoji = memo((code) => {
+        if (!code) return '';
+        const map = {
+            ENGLAND: '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F',
+            SCOTLAND: '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F',
+            WALES: '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC77\uDB40\uDC6C\uDB40\uDC73\uDB40\uDC7F'
+        };
+        const upper = code.trim().toUpperCase();
+        if (map[upper]) return map[upper];
         const OFFSET = 127397;
-        return [...code.toUpperCase()].map(c =>
-            String.fromCodePoint(c.charCodeAt(0) + OFFSET)
-        ).join('');
-    }
+        return [...upper].map(c => String.fromCodePoint(c.charCodeAt(0) + OFFSET)).join('');
+    });
+
+    const make = (tag, props = {}, children = []) => {
+        const el = document.createElement(tag);
+        for (const [k, v] of Object.entries(props)) {
+            if (k === 'class') el.className = v;
+            else if (k === 'dataset') Object.assign(el.dataset, v);
+            else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+            else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+            else if (k === 'text') el.textContent = v;
+            else el.setAttribute(k, v);
+        }
+        const appendChild = (c) => {
+            if (c == null) return;
+            if (c instanceof Node || c instanceof DocumentFragment) { el.append(c); return; }
+            if (typeof c[Symbol.iterator] === 'function' && !(typeof c === 'string')) {
+                for (const sub of c) appendChild(sub);
+                return;
+            }
+            el.append(document.createTextNode(String(c)));
+        };
+        appendChild(children);
+        return el;
+    };
+
+    const byId = (id) => document.getElementById(id);
 
     function renderFlagBadges(countriesStr) {
-        if (!countriesStr) return "";
-        const codes = countriesStr.split(',').map(c => c.trim().toUpperCase());
-        return codes.map(code => {
-            const flag = flagEmoji(code);
-            return `<span class="flag-badge" aria-label="${code} flag">${flag}</span>`;
-        }).join("");
+        if (!countriesStr) return make('span');
+        const codes = String(countriesStr).split(',').map(c => c.trim().toUpperCase()).filter(Boolean);
+        return make('span', { class: 'flags' }, codes.map(code =>
+            make('span', { class: 'flag-badge', ariaLabel: `${code} flag` }, flagEmoji(code))
+        ));
     }
 
     function getLogoElement(item) {
-        const logo = item.Logo?.trim();
-        if (logo) {
-            return `<div class="tap-logo"><img src="${logo}" alt="Logo"></div>`;
-        }
-        const emoji = item.Type.toLowerCase().includes("cider") ? '🍎' : '🍺';
-        return `<div class="tap-logo">${emoji}</div>`;
+        const logo = item.Logo && String(item.Logo).trim();
+        if (logo) return make('div', { class: 'tap-logo' }, make('img', { src: logo, alt: `${item.Name} logo`, loading: 'lazy' }));
+        const type = item.Type || '';
+        if (/perry/i.test(type)) return make('div', { class: 'tap-logo', ariaLabel: 'Perry' }, '🍐');
+        if (/cider/i.test(type)) return make('div', { class: 'tap-logo', ariaLabel: 'Cider' }, '🍎');
+        return make('div', { class: 'tap-logo', ariaLabel: 'Beer' }, '🍺');
     }
 
-    function renderTapItem(item, priceValue) {
-        const countries = `<div class="tap-countries">${renderFlagBadges(item['Country'] || item['Countries'] || '')}</div>`;
-        const tapNumber = item['Tap Number'] ? `<div class=\"tap-number\">${item['Tap Number']}</div>` : '';
-        const logo = getLogoElement(item);
-        const price = item['Price Info']?.trim();
-        return `
-        <div class="tap-item">
-        <div class="tap-col">
-          ${tapNumber}
-          ${countries}
-          ${logo}
-          <div class="tap-details">
-            <div class="tap-name">${item.Name}</div>
-            <div style="display: flex; justify-content: space-between;"><span class="tap-style">${item.Style ? item.Style : ''}</span><span class="tap-abv">${item.ABV ? 'ABV: ' + item.ABV + '%' : ''}</span></div>
-            <div class="tap-description">${item.Description || ''}</div>
-          </div>
-        </div>
-        <div class="tap-price">${formatPrice(price ? price : priceValue)}</div>
-        </div>`;
+    function highlightYen(price) {
+        const frag = document.createDocumentFragment();
+        const regex = /(¥\d+[\d,]*)/g;
+        let lastIndex = 0; let m;
+        const s = String(price ?? '');
+        while ((m = regex.exec(s)) !== null) {
+            if (m.index > lastIndex) frag.append(s.slice(lastIndex, m.index));
+            frag.append(make('span', { class: 'price-text' }, m[1]));
+            lastIndex = regex.lastIndex;
+        }
+        if (lastIndex < s.length) frag.append(s.slice(lastIndex));
+        return frag;
+    }
+
+    function renderTapItem(item, defaultPriceNote) {
+        const price = (item['Price Info'] && String(item['Price Info']).trim()) || defaultPriceNote || '';
+        const countries = renderFlagBadges(item['Country'] || item['Countries'] || '');
+        const number = item['Tap Number'] && make('div', { class: 'tap-number' }, String(item['Tap Number']));
+
+        const card = make('article', { class: 'tap-item', role: 'listitem' }, [
+            make('div', { class: 'tap-col' }, [
+                number,
+                make('div', { class: 'tap-countries' }, countries),
+                getLogoElement(item),
+                make('div', { class: 'tap-details' }, [
+                    make('div', { class: 'tap-name' }, String(item.Name || '')),
+                    make('div', { class: 'meta-row' }, [
+                        make('span', { class: 'tap-style' }, String(item.Style || '')),
+                        make('span', { class: 'tap-abv' }, item.ABV ? `ABV: ${item.ABV}%` : ''),
+                    ]),
+                    make('p', { class: 'tap-description' }, String(item.Description || '')),
+                ]),
+            ]),
+            make('div', { class: 'tap-price' }),
+        ]);
+
+        const priceHost = card.querySelector('.tap-price');
+        priceHost.append(highlightYen(price));
+        return card;
+    }
+
+    function coerceBool(v) { return /^(true|1|yes)$/i.test(String(v || '')); }
+
+    function pickStandardPrice(rows) {
+        let val = '';
+        for (const row of rows) {
+            const s = row['Standard Price Note'] && String(row['Standard Price Note']).trim();
+            if (s) val = s;
+        }
+        return val;
     }
 
     function scaleTapBoard() {
+        const scaler = byId('boardScaler');
         const chalkboard = document.querySelector('.chalkboard');
-        const beer_header = document.getElementById('tap-beer-header');
-        const cider_header = document.getElementById('tap-cider-header');
-        const cider = document.getElementById('cider-column');
-        const beer = document.getElementById('beer-column');
-        const tapBoard = document.querySelector('.tap-board-scaler');
+        const ciderHeader = byId('tap-cider-header');
+        const beerHeader = byId('tap-beer-header');
+        const cider = byId('cider-column');
+        const beer = byId('beer-column');
+        if (!scaler || !chalkboard || !cider || !beer) return;
+        const headerH = Math.max(ciderHeader?.offsetHeight || 0, beerHeader?.offsetHeight || 0);
+        const availableHeight = chalkboard.clientHeight - headerH - 50;
+        const maxHeight = Math.max(cider.scrollHeight, beer.scrollHeight);
+        const scale = maxHeight > 0 ? Math.min(1, availableHeight / maxHeight) : 1;
+        scaler.style.transform = `scale(${scale})`;
+        scaler.style.height = `${Math.ceil(maxHeight * scale)}px`;
+        scaler.style.overflow = 'visible';
+    }
 
-        const availableHeight = chalkboard.clientHeight - Math.max(beer_header.offsetHeight, cider_header.offsetHeight) - 50;
-        const ciderHeight = cider.scrollHeight;
-        const beerHeight = beer.scrollHeight;
-        const maxHeight = Math.max(ciderHeight, beerHeight);
+    let resizeRAF = null;
+    function scheduleScale() {
+        if (resizeRAF) cancelAnimationFrame(resizeRAF);
+        resizeRAF = requestAnimationFrame(scaleTapBoard);
+    }
 
-        if (maxHeight > availableHeight) {
-            const scale = availableHeight / maxHeight;
-            tapBoard.style.transform = `scale(${scale})`;
-            tapBoard.style.transformOrigin = 'top';
-            tapBoard.style.overflowY = 'visible';
-        } else {
-            tapBoard.style.transform = 'scale(1)';
+    function renderRows(rows) {
+        const ciderColumn = byId('cider-column');
+        const beerColumn = byId('beer-column');
+        const ciderHeader = byId('tap-cider-header');
+        if (!ciderColumn || !beerColumn) return;
+
+        ciderColumn.innerHTML = '';
+        beerColumn.innerHTML = '';
+
+        const defaultPrice = pickStandardPrice(rows);
+
+        const ciderFrag = document.createDocumentFragment();
+        const beerFrag = document.createDocumentFragment();
+        let hasPerry = false;
+
+        for (const item of rows) {
+            if (!item.Name) continue;
+            if (!coerceBool(item.Available)) continue;
+            if (/perry/i.test(item.Type || '')) hasPerry = true;
+
+            const card = renderTapItem(item, defaultPrice);
+            (/(cider)|(perry)/i.test(item.Type || '') ? ciderFrag : beerFrag).append(card);
         }
-    }
 
-    function escapeHTML(str) {
-        return str
-            .replace(/&/g, '&amp;') // Replace ampersand
-            .replace(/</g, '&lt;')  // Replace less than
-            .replace(/>/g, '&gt;')  // Replace greater than
-            .replace(/"/g, '&quot;') // Replace double quote
-            .replace(/'/g, '&apos;'); // Replace single quote
-    }
+        ciderHeader.textContent = hasPerry ? 'CIDER & PERRY' : 'CIDER'
 
-    function formatPrice(price) {
-        return price.replace(/¥\d+/g, function(x) {return '<span class="price-text">' + x + '</span>'});
+        ciderColumn.append(ciderFrag);
+        beerColumn.append(beerFrag);
+        window._lastUpdated = new Date();
+        scheduleScale();
     }
 
     function loadTapData() {
-        Papa.parse(sheetURL, {
+        Papa.parse(SHEET_CSV_URL, {
             download: true,
             header: true,
-            complete: function(results) {
-                const data = results.data.filter(row => row.Name);
-                const ciderColumn = document.getElementById('cider-column');
-                const beerColumn = document.getElementById('beer-column');
-
-                const priceData = results.data.filter(row => row['Standard Price Note'].trim())
-                let priceValue = ''
-                priceData.forEach(row => {
-                   priceValue = row['Standard Price Note'];
-                })
-
-                ciderColumn.innerHTML = '';
-                beerColumn.innerHTML = '';
-
-                data.forEach(item => {
-                    if (item.Available === "TRUE") {
-                        for (const key in item) {
-                            item[key] = escapeHTML(item[key]);
-                        }
-                        const html = renderTapItem(item, priceValue);
-                        if (item.Type.toLowerCase().includes("cider")) {
-                            ciderColumn.innerHTML += html;
-                        } else {
-                            beerColumn.innerHTML += html;
-                        }
-                    }
-                });
-
-                window._lastUpdated = new Date();
-
-                scaleTapBoard();
-            }
+            skipEmptyLines: true,
+            complete: ({ data }) => {
+                try { renderRows(data); } catch (err) { console.error(err); }
+            },
+            error: (err) => { console.error('PapaParse error', err); },
         });
     }
 
     function watchdog() {
-        // If the data hasn't been updated in the last 2 minutes, reload the page
-        if (window._lastUpdated && new Date() - window._lastUpdated > 2 * 60 * 1000) {
-            window.location.reload(true);
+        if (window._lastUpdated && (Date.now() - window._lastUpdated.getTime()) > 2 * 60 * 1000) {
+            window.location.reload();
         }
     }
 
-    loadTapData(); // Do the initial load
-
-    setInterval(loadTapData, 60 * 1000); // Set up the interval to refresh the data every minute
-    setInterval(watchdog, 90 * 1000);  // Set up the interval to trigger the watchdog every 1.5 minutes
-
-    window.addEventListener('resize', scaleTapBoard); // Set up the event listener for window resize
+    const ro = new ResizeObserver(scheduleScale);
+    window.addEventListener('load', () => {
+        ro.observe(byId('cider-column'));
+        ro.observe(byId('beer-column'));
+        window.addEventListener('resize', scheduleScale);
+        loadTapData();
+        setInterval(loadTapData, 60 * 1000);
+        setInterval(watchdog, 90 * 1000);
+    });
 </script>
 </body>
 </html>
