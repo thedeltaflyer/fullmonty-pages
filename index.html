@@ -70,7 +70,7 @@
             padding: 1.5rem 1rem 1rem;
             border-radius: 0.5rem;
             box-shadow: inset 0 0 10px #00000099;
-            min-height: 120px;
+            min-height: 80px;
             border: 1px solid #3e5e4a;
             background-size: cover;
             margin-bottom: 1rem;
@@ -80,8 +80,8 @@
             align-items: flex-start;
         }
         .tap-logo {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background: #555;
             border-radius: 0.5rem;
             overflow: hidden;
@@ -91,7 +91,7 @@
             justify-content: center;
             margin-right: 1rem;
             border: 2px solid #facc15;
-            font-size: 4em;
+            font-size: 3em;
         }
         .tap-logo img {
             max-width: 100%;
@@ -260,21 +260,45 @@
         </div>`;
     }
 
-    function scaleTapBoard() {
+    function scaleRatio(){
         const chalkboard = document.querySelector('.chalkboard');
         const beer_header = document.getElementById('tap-beer-header');
         const cider_header = document.getElementById('tap-cider-header');
         const cider = document.getElementById('cider-column');
         const beer = document.getElementById('beer-column');
-        const tapBoard = document.querySelector('.tap-board-scaler');
 
         const availableHeight = chalkboard.clientHeight - Math.max(beer_header.offsetHeight, cider_header.offsetHeight) - 50;
         const ciderHeight = cider.scrollHeight;
         const beerHeight = beer.scrollHeight;
         const maxHeight = Math.max(ciderHeight, beerHeight);
 
-        if (maxHeight > availableHeight) {
-            const scale = availableHeight / maxHeight;
+        if (maxHeight > availableHeight){
+            return availableHeight / maxHeight;
+        }else{
+            return 0;
+        }
+    }
+
+    function dropDescription(){
+        const scale = scaleRatio();
+
+
+        if (scale != 0) {
+            const elementsWithClassName = document.querySelectorAll('.tap-description');
+            elementsWithClassName.forEach(
+                item => {
+                    item.style.display = 'none';
+                    item
+                }
+            );
+        }
+    }
+
+    function scaleTapBoard() {
+        const tapBoard = document.querySelector('.tap-board-scaler');
+        const scale = scaleRatio();
+
+        if (scale != 0) {
             tapBoard.style.transform = `scale(${scale})`;
             tapBoard.style.transformOrigin = 'top';
             tapBoard.style.overflowY = 'visible';
@@ -330,6 +354,7 @@
 
                 window._lastUpdated = new Date();
 
+                dropDescription();
                 scaleTapBoard();
             }
         });
