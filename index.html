@@ -226,7 +226,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js" defer></script>
 <script>
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQEmwx6KHWzzdDpsSCw6LNg8LLwEE1eftKKSqycOOCWidYITkFOVDpmJ1meNcvSwE4-pzWr_/pub?output=csv';
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQEmwx6KHWzzdDpsSCw6LNg8LLwEE1eftKKSqycOOCWidYITkFOVDpmJ1meNcvSwE4-pzWr_/pub?gid=0&single=true&output=csv';
 
     const memo = (fn) => { const cache = new Map(); return (k) => cache.has(k) ? cache.get(k) : (cache.set(k, fn(k)), cache.get(k)); };
 
@@ -346,7 +346,7 @@
         const beer = byId('beer-column');
         if (!scaler || !chalkboard || !cider || !beer) return;
         const headerH = Math.max(ciderHeader?.offsetHeight || 0, beerHeader?.offsetHeight || 0);
-        const availableHeight = chalkboard.clientHeight - headerH - 32;
+        const availableHeight = chalkboard.clientHeight - headerH - 50;
         const maxHeight = Math.max(cider.scrollHeight, beer.scrollHeight);
         const scale = maxHeight > 0 ? Math.min(1, availableHeight / maxHeight) : 1;
         scaler.style.transform = `scale(${scale})`;
