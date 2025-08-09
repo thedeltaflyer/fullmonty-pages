@@ -232,8 +232,15 @@
 
     const flagEmoji = memo((code) => {
         if (!code) return '';
+        const map = {
+            ENGLAND: '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F',
+            SCOTLAND: '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F',
+            WALES: '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC77\uDB40\uDC6C\uDB40\uDC73\uDB40\uDC7F'
+        };
+        const upper = code.trim().toUpperCase();
+        if (map[upper]) return map[upper];
         const OFFSET = 127397;
-        return [...code.toUpperCase()].map(c => String.fromCodePoint(c.charCodeAt(0) + OFFSET)).join('');
+        return [...upper].map(c => String.fromCodePoint(c.charCodeAt(0) + OFFSET)).join('');
     });
 
     const make = (tag, props = {}, children = []) => {
