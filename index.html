@@ -260,31 +260,54 @@
         </div>`;
     }
 
-    function scaleRatio(){
+    function beerRatio(){
         const chalkboard = document.querySelector('.chalkboard');
         const beer_header = document.getElementById('tap-beer-header');
-        const cider_header = document.getElementById('tap-cider-header');
-        const cider = document.getElementById('cider-column');
         const beer = document.getElementById('beer-column');
 
-        const availableHeight = chalkboard.clientHeight - Math.max(beer_header.offsetHeight, cider_header.offsetHeight) - 50;
-        const ciderHeight = cider.scrollHeight;
+        const availableHeight = chalkboard.clientHeight - beer_header.offsetHeight - 50;
         const beerHeight = beer.scrollHeight;
-        const maxHeight = Math.max(ciderHeight, beerHeight);
 
-        if (maxHeight > availableHeight){
-            return availableHeight / maxHeight;
+        if (beerHeight > availableHeight){
+            return availableHeight / beerHeight;
         }else{
-            return 0;
+            return 1;
         }
     }
 
+    function ciderRatio(){
+        const chalkboard = document.querySelector('.chalkboard');
+        const cider_header = document.getElementById('tap-cider-header');
+        const cider = document.getElementById('cider-column');
+
+        const availableHeight = chalkboard.clientHeight - cider_header.offsetHeight - 50;
+        const ciderHeight = cider.scrollHeight;
+
+        if (ciderHeight > availableHeight){
+            return availableHeight / ciderHeight;
+        }else{
+            return 1;
+        }
+    }
+
+    function scaleRatio(){
+        return Math.min(ciderRatio(), beerRatio());
+    }
+
     function dropDescription(){
-        const scale = scaleRatio();
 
+        if (ciderRatio() != 1) {
+            const elementsWithClassName = document.getElementById('cider-column').querySelectorAll('.tap-description');
+            elementsWithClassName.forEach(
+                item => {
+                    item.style.display = 'none';
+                    item
+                }
+            );
+        }
 
-        if (scale != 0) {
-            const elementsWithClassName = document.querySelectorAll('.tap-description');
+        if (beerRatio() != 1) {
+            const elementsWithClassName = document.getElementById('beer-column').querySelectorAll('.tap-description');
             elementsWithClassName.forEach(
                 item => {
                     item.style.display = 'none';
@@ -298,7 +321,7 @@
         const tapBoard = document.querySelector('.tap-board-scaler');
         const scale = scaleRatio();
 
-        if (scale != 0) {
+        if (scale != 1) {
             tapBoard.style.transform = `scale(${scale})`;
             tapBoard.style.transformOrigin = 'top';
             tapBoard.style.overflowY = 'visible';
