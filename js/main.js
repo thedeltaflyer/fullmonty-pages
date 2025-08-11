@@ -228,7 +228,7 @@ function scheduleScale() {
 /**
  * process the CSV data parsed by Papa parse
  * @returns
- * @param {TapItem[]} rows
+ * @param {Object[]} rows
  */
 
 function renderRows(rows) {
