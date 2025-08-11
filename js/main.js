@@ -5,10 +5,10 @@ const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQ
 class TapItem {
     /**
      * 
-     * @param {any} tapItem - row data from a CSV file parsed by Papa parse
+     * @param {Object} tapItem - row data from a CSV file parsed by Papa parse
      */
     constructor(tapItem) {
-        this.Available = String(tapItem['Available'] || '').trim();
+        this.Available = coerceBool(String(tapItem['Available'] || '').trim());
         this.Tap_Number = String(tapItem['Tap Number'] || '').trim();
         this.Type = String(tapItem['Type'] || '').trim();
         this.Maker = String(tapItem['Maker'] || '').trim();
@@ -18,10 +18,9 @@ class TapItem {
         this.Description = String(tapItem['Description'] || '').trim();
         this.Price_Info = String(tapItem['Price Info'] || '').trim();
         this.Logo = String(tapItem['Logo'] || '').trim();
-        this.Countries = String(tapItem['Countrie'] || tapItem['Countries'] || '').trim();
+        this.Countries = String(tapItem['Country'] || tapItem['Countries'] || '').trim();
         this.Maker_JP = String(tapItem['Maker_JP'] || '').trim();
-        this.Maker_JP = String(tapItem['Name_JP'] || '').trim();
-        this.Available = String(tapItem['Available'] || '').trim();
+        this.Name_JP = String(tapItem['Name_JP'] || '').trim();
         this.Description_JP = String(tapItem['Description_JP'] || '').trim();
         this.Standard_Price_Note = String(tapItem['Standard Price Note'] || '').trim();
     }
@@ -43,7 +42,7 @@ class TapItem {
     Standard_Price_Note;
 
     /**
-     * create an html DocumentFregment with the correct logo based on the Type
+     * create an HTML DocumentFragment with the correct logo based on the Type
      * @returns {DocumentFragment}
      */
     getLogoElement() {
@@ -54,7 +53,7 @@ class TapItem {
     }
 
     /**
-     * create an html DocumentFragment with the correct country flags based on the Countries
+     * create an HTML DocumentFragment with the correct country flags based on the Countries
      * @returns {DocumentFragment}
      */
     renderFlagBadges() {
@@ -82,9 +81,9 @@ class TapItem {
                 this.getLogoElement(),
                 make('div', { class: 'tap-details' }, [
                     make('div', { class: 'tap-fullname' }, [
-                        make('span', { class: 'tap-maker', style: (this.Maker == '' ? 'display: none' : '') }, this.Maker),
+                        make('span', { class: 'tap-maker', style: (this.Maker === '' ? 'display: none' : '') }, this.Maker),
                         make('span', { style: ([this.Maker, this.Name].includes('') ? 'display: none' : '') }, ' • '),
-                        make('span', { class: 'tap-name', style: (this.Name == '' ? 'display: none' : '') }, this.Name),
+                        make('span', { class: 'tap-name', style: (this.Name === '' ? 'display: none' : '') }, this.Name),
                     ]),
                     make('div', { class: 'meta-row' }, [
                         make('span', { class: 'tap-style' }, this.Style),
@@ -119,9 +118,9 @@ const flagEmoji = memo((code) => {
 });
 
 /**
- * creates an html DocumentFragment
- * @param {any} tag - Html tag of the DocumentFragment
- * @param {any} props - Properties of the Html DocumentFragment e.g. class, style
+ * creates an HTML DocumentFragment
+ * @param {any} tag - HTML tag of the DocumentFragment
+ * @param {any} props - Properties of the HTML DocumentFragment e.g., class or style
  * @param {any} children - Child items
  * @returns {DocumentFragment}
  */
@@ -152,7 +151,7 @@ const byId = (id) => document.getElementById(id);
 
 /**
  * create a DocumentFragment with and prices wrapped in a span with the class set to price-text
- * @param {String} price
+ * @param {string} price
  * @returns {DocumentFragment}
  */
 function highlightYen(price) {
@@ -172,7 +171,7 @@ function highlightYen(price) {
 /**
  * 
  * @param {any} v
- * @returns {string}
+ * @returns {boolean}
  */
 function coerceBool(v) { return /^(true|1|yes)$/i.test(String(v || '')); }
 
@@ -186,9 +185,9 @@ function normalizeString(v) {
 }
 
 /**
- * Find the standard price from all of the TapItems
- * @param {TapItem[]}
+ * Find the standard price from all the TapItems
  * @returns {string}
+ * @param {TapItem[]} rows
  */
 function pickStandardPrice(rows) {
     let val = '';
@@ -228,8 +227,8 @@ function scheduleScale() {
 
 /**
  * process the CSV data parsed by Papa parse
- * @param {any[]}
  * @returns
+ * @param {TapItem[]} rows
  */
 
 function renderRows(rows) {
@@ -253,7 +252,7 @@ function renderRows(rows) {
 
     for (const tapItem of tapItems) {
         if (!tapItem.Maker && !tapItem.Name) continue;
-        if (!coerceBool(tapItem.Available)) continue;
+        if (!tapItem.Available) continue;
 
         if (/perry/i.test(tapItem.Type)) hasPerry = true;
         const card = tapItem.renderTapItem(defaultPrice);
