@@ -23,6 +23,8 @@ class TapItem {
         this.Name_JP = normalizeString(tapItem['Name_JP']);
         this.Description_JP = normalizeString(tapItem['Description_JP']);
         this.Standard_Price_Note = normalizeString(tapItem['Standard Price Note']);
+
+        if (this.Standard_Price_Note != '') TapItem.DefaultPriceNote = String(this.Standard_Price_Note);
     }
 
     Available;
@@ -40,6 +42,34 @@ class TapItem {
     Name_JP;
     Description_JP;
     Standard_Price_Note;
+
+    static DefaultPriceNote;
+
+    /**
+     * create a DocumentFragment with the yen price wrapped in a span with the class set to price-text
+     * @returns {DocumentFragment}
+     */
+    HighlightYen() {
+        const frag = document.createDocumentFragment();
+        const regex = /(¥\d+[\d,]*)/g;
+        let lastIndex = 0; let m;
+        const s = String(this.GetPrice() ?? '');
+        while ((m = regex.exec(s)) !== null) {
+            if (m.index > lastIndex) frag.append(s.slice(lastIndex, m.index));
+            frag.append(make('span', { class: 'price-text' }, m[1]));
+            lastIndex = regex.lastIndex;
+        }
+        if (lastIndex < s.length) frag.append(s.slice(lastIndex));
+        return frag;
+    }
+
+    /**
+     * Returns the price of this tap item or default price if not set
+     * @returns {string}
+     */
+    GetPrice() {
+        return this.Price_Info || TapItem.DefaultPriceNote || '';
+    }
 
     /**
      * create an HTML DocumentFragment with the correct logo based on the Type
@@ -69,8 +99,7 @@ class TapItem {
      * @param {string} defaultPriceNote
      * @returns {DocumentFragment}
      */
-    renderTapItem(defaultPriceNote) {
-        const price = this.Price_Info || defaultPriceNote || '';
+    renderTapItem() {
         const countries = this.renderFlagBadges()
         const number = this.Tap_Number ? make('div', { class: 'tap-number' }, this.Tap_Number) : '';
 
@@ -96,7 +125,7 @@ class TapItem {
         ]);
 
         const priceHost = card.querySelector('.tap-price');
-        priceHost.append(highlightYen(price));
+        priceHost.append(this.HighlightYen());
         return card;
     }
 
@@ -148,25 +177,6 @@ const make = (tag, props = {}, children = []) => {
 };
 
 const byId = (id) => document.getElementById(id);
-
-/**
- * create a DocumentFragment with and prices wrapped in a span with the class set to price-text
- * @param {string} price
- * @returns {DocumentFragment}
- */
-function highlightYen(price) {
-    const frag = document.createDocumentFragment();
-    const regex = /(¥\d+[\d,]*)/g;
-    let lastIndex = 0; let m;
-    const s = String(price ?? '');
-    while ((m = regex.exec(s)) !== null) {
-        if (m.index > lastIndex) frag.append(s.slice(lastIndex, m.index));
-        frag.append(make('span', { class: 'price-text' }, m[1]));
-        lastIndex = regex.lastIndex;
-    }
-    if (lastIndex < s.length) frag.append(s.slice(lastIndex));
-    return frag;
-}
 
 /**
  * 
@@ -240,8 +250,6 @@ function renderRows(rows) {
     ciderColumn.innerHTML = '';
     beerColumn.innerHTML = '';
 
-
-
     const ciderFrag = document.createDocumentFragment();
     const beerFrag = document.createDocumentFragment();
     let hasPerry = false;
@@ -256,14 +264,12 @@ function renderRows(rows) {
         return a.Tap_Number - b.Tap_Number;
     })
 
-    const defaultPrice = pickStandardPrice(tapItems);
-
     for (const tapItem of tapItems) {
         if (!tapItem.Maker && !tapItem.Name) continue;
         if (!tapItem.Available) continue;
 
         if (/perry/i.test(tapItem.Type)) hasPerry = true;
-        const card = tapItem.renderTapItem(defaultPrice);
+        const card = tapItem.renderTapItem();
         (/(cider)|(perry)/i.test(tapItem.Type) ? ciderFrag : beerFrag).append(card);
     }
 
