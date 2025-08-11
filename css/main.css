@@ -131,6 +131,10 @@ body {
     line-height: 1.2;
 }
 
+.display-none {
+    display: none;
+}
+
 .meta-row {
     display: flex;
     justify-content: space-between;

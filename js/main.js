@@ -81,9 +81,9 @@ class TapItem {
                 this.getLogoElement(),
                 make('div', { class: 'tap-details' }, [
                     make('div', { class: 'tap-fullname' }, [
-                        make('span', { class: 'tap-maker', style: (this.Maker === '' ? 'display: none' : '') }, this.Maker),
-                        make('span', { style: ([this.Maker, this.Name].includes('') ? 'display: none' : '') }, ' • '),
-                        make('span', { class: 'tap-name', style: (this.Name === '' ? 'display: none' : '') }, this.Name),
+                        make('span', { class: (this.Maker === '' ? 'tap-maker display-none' : 'tap-maker') }, this.Maker),
+                        make('span', { class: ([this.Maker, this.Name].includes('') ? 'display-none' : '') }, ' • '),
+                        make('span', { class: (this.Name === '' ? 'tap-name display-none' : 'tap-name') }, this.Name),
                     ]),
                     make('div', { class: 'meta-row' }, [
                         make('span', { class: 'tap-style' }, this.Style),
