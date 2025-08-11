@@ -187,11 +187,11 @@ function normalizeString(v) {
 /**
  * Find the standard price from all the TapItems
  * @returns {string}
- * @param {TapItem[]} rows
+ * @param {TapItem[]} tapItems
  */
-function pickStandardPrice(rows) {
+function pickStandardPrice(tapItems) {
     let val = '';
-    for (const row of rows) {
+    for (const row of tapItems) {
         const s = row.Standard_Price_Note;
         if (s) val = s;
     }
