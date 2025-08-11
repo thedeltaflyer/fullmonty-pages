@@ -124,7 +124,7 @@ body {
     min-width: 0;
 }
 
-.tap-name {
+.tap-fullname {
     font-family: 'Short Stack', cursive;
     font-size: clamp(1.25rem, 1vw + 1rem, 2rem);
     font-weight: 700;
