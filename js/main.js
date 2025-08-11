@@ -247,6 +247,7 @@ function renderRows(rows) {
     let hasPerry = false;
 
     const tapItems = rows.map(row => new TapItem(row));
+    tapItems.sort((a,b) => a.Tap_Number - b.Tap_Number)
 
     const defaultPrice = pickStandardPrice(tapItems);
 
