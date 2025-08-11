@@ -4,6 +4,10 @@ const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQ
 const TAP_FIELDS =['Available','Tap Number','Type','Maker','Name','Style','ABV','Description','Price Info','Logo','Countries','Maker_JP','Name_JP','Description_JP','Standard Price Note']
 
 class TapItem {
+    /**
+     * 
+     * @param {any} tapItem - row data from a CSV file parsed by Papa parse
+     */
     constructor(tapItem) {
         this.Available = String(tapItem['Available'] || '').trim();
         this.Tap_Number = String(tapItem['Tap Number'] || '').trim();
@@ -40,6 +44,7 @@ class TapItem {
     Standard_Price_Note;
 
     /**
+     * create an html DocumentFregment with the correct logo based on the Type
      * @returns {DocumentFragment}
      */
     getLogoElement() {
@@ -50,6 +55,7 @@ class TapItem {
     }
 
     /**
+     * create an html DocumentFragment with the correct country flags based on the Countries
      * @returns {DocumentFragment}
      */
     renderFlagBadges() {
@@ -63,7 +69,7 @@ class TapItem {
     /**
      * 
      * @param {string} defaultPriceNote
-     * @returns
+     * @returns {DocumentFragment}
      */
     renderTapItem(defaultPriceNote) {
         const price = this.Price_Info || defaultPriceNote || '';
@@ -114,10 +120,10 @@ const flagEmoji = memo((code) => {
 });
 
 /**
- * 
- * @param {any} tag
- * @param {any} props
- * @param {any} children
+ * creates an html DocumentFragment
+ * @param {any} tag - Html tag of the DocumentFragment
+ * @param {any} props - Properties of the Html DocumentFragment e.g. class, style
+ * @param {any} children - Child items
  * @returns {DocumentFragment}
  */
 const make = (tag, props = {}, children = []) => {
@@ -146,6 +152,7 @@ const make = (tag, props = {}, children = []) => {
 const byId = (id) => document.getElementById(id);
 
 /**
+ * create a DocumentFragment with and prices wrapped in a span with the class set to price-text
  * @param {String} price
  * @returns {DocumentFragment}
  */
@@ -164,16 +171,23 @@ function highlightYen(price) {
 }
 
 /**
+ * 
  * @param {any} v
  * @returns {string}
  */
 function coerceBool(v) { return /^(true|1|yes)$/i.test(String(v || '')); }
 
-function normalizeString(v, trueValue, falseValue ) {
+/**
+ * Normalize input to a string and trim the result
+ * @param {any} v
+ * @returns
+ */
+function normalizeString(v) {
     return String(v || '').trim();
 }
 
 /**
+ * Find the standard price from all of the TapItems
  * @param {TapItem[]}
  * @returns {string}
  */
@@ -186,6 +200,10 @@ function pickStandardPrice(rows) {
     return val;
 }
 
+/**
+ * Scale the tap board so it fits inside the client view area
+ * @returns
+ */
 function scaleTapBoard() {
     const scaler = byId('boardScaler');
     const chalkboard = document.querySelector('.chalkboard');
@@ -208,6 +226,12 @@ function scheduleScale() {
     if (resizeRAF) cancelAnimationFrame(resizeRAF);
     resizeRAF = requestAnimationFrame(scaleTapBoard);
 }
+
+/**
+ * process the CSV data parsed by Papa parse
+ * @param {any[]}
+ * @returns
+ */
 
 function renderRows(rows) {
     const ciderColumn = byId('cider-column');
