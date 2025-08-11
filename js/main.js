@@ -8,21 +8,21 @@ class TapItem {
      * @param {Object} tapItem - row data from a CSV file parsed by Papa parse
      */
     constructor(tapItem) {
-        this.Available = coerceBool(String(tapItem['Available'] || '').trim());
-        this.Tap_Number = String(tapItem['Tap Number'] || '').trim();
-        this.Type = String(tapItem['Type'] || '').trim();
-        this.Maker = String(tapItem['Maker'] || '').trim();
-        this.Name = String(tapItem['Name'] || '').trim();
-        this.Style = String(tapItem['Style'] || '').trim();
-        this.ABV = String(tapItem['ABV'] || '').trim();
-        this.Description = String(tapItem['Description'] || '').trim();
-        this.Price_Info = String(tapItem['Price Info'] || '').trim();
-        this.Logo = String(tapItem['Logo'] || '').trim();
-        this.Countries = String(tapItem['Country'] || tapItem['Countries'] || '').trim();
-        this.Maker_JP = String(tapItem['Maker_JP'] || '').trim();
-        this.Name_JP = String(tapItem['Name_JP'] || '').trim();
-        this.Description_JP = String(tapItem['Description_JP'] || '').trim();
-        this.Standard_Price_Note = String(tapItem['Standard Price Note'] || '').trim();
+        this.Available = coerceBool(normalizeString(tapItem['Available']));
+        this.Tap_Number = normalizeString(tapItem['Tap Number']);
+        this.Type = normalizeString(tapItem['Type']);
+        this.Maker = normalizeString(tapItem['Maker']);
+        this.Name = normalizeString(tapItem['Name']);
+        this.Style = normalizeString(tapItem['Style']);
+        this.ABV = normalizeString(tapItem['ABV']);
+        this.Description = normalizeString(tapItem['Description']);
+        this.Price_Info = normalizeString(tapItem['Price Info']);
+        this.Logo = normalizeString(tapItem['Logo']);
+        this.Countries = normalizeString(tapItem['Country']) || normalizeString(tapItem['Countries']);
+        this.Maker_JP = normalizeString(tapItem['Maker_JP']);
+        this.Name_JP = normalizeString(tapItem['Name_JP']);
+        this.Description_JP = normalizeString(tapItem['Description_JP']);
+        this.Standard_Price_Note = normalizeString(tapItem['Standard Price Note']);
     }
 
     Available;
