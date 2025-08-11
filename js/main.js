@@ -9,7 +9,7 @@ class TapItem {
      */
     constructor(tapItem) {
         this.Available = coerceBool(normalizeString(tapItem['Available']));
-        this.Tap_Number = normalizeString(tapItem['Tap Number']);
+        this.Tap_Number = parseInt(normalizeString(tapItem['Tap Number']) || 0);
         this.Type = normalizeString(tapItem['Type']);
         this.Maker = normalizeString(tapItem['Maker']);
         this.Name = normalizeString(tapItem['Name']);
@@ -72,7 +72,7 @@ class TapItem {
     renderTapItem(defaultPriceNote) {
         const price = this.Price_Info || defaultPriceNote || '';
         const countries = this.renderFlagBadges()
-        const number = this.Tap_Number && make('div', { class: 'tap-number' }, this.Tap_Number);
+        const number = this.Tap_Number ? make('div', { class: 'tap-number' }, this.Tap_Number) : '';
 
         const card = make('article', { class: 'tap-item', role: 'listitem' }, [
             make('div', { class: 'tap-col' }, [
