@@ -14,7 +14,7 @@ class TapItem {
         this.Maker = normalizeString(tapItem['Maker']);
         this.Name = normalizeString(tapItem['Name']);
         this.Style = normalizeString(tapItem['Style']);
-        this.ABV = normalizeString(tapItem['ABV']);
+        this.ABV = parseFloat(normalizeString(tapItem['ABV']));
         this.Description = normalizeString(tapItem['Description']);
         this.Price_Info = normalizeString(tapItem['Price Info']);
         this.Logo = normalizeString(tapItem['Logo']);
@@ -87,7 +87,7 @@ class TapItem {
                     ]),
                     make('div', { class: 'meta-row' }, [
                         make('span', { class: 'tap-style' }, this.Style),
-                        make('span', { class: 'tap-abv' }, this.ABV ? `ABV: ${this.ABV}%` : ''),
+                        make('span', { class: 'tap-abv' }, this.ABV ? `ABV: ${this.ABV.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 }) }%` : ''),
                     ]),
                     make('p', { class: 'tap-description' }, this.Description),
                 ]),
