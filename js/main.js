@@ -247,7 +247,14 @@ function renderRows(rows) {
     let hasPerry = false;
 
     const tapItems = rows.map(row => new TapItem(row));
-    tapItems.sort((a,b) => a.Tap_Number - b.Tap_Number)
+
+    // Sort taps in ascending order but where tap 0 items, i.e. items not on tap, are last
+    tapItems.sort(function (a, b) {
+        if (a.Tap_Number == b.Tap_Number) return 0;
+        if (b.Tap_Number == 0) return -1;
+        if (a.Tap_Number == 0) return 1;
+        return a.Tap_Number - b.Tap_Number;
+    })
 
     const defaultPrice = pickStandardPrice(tapItems);
 
