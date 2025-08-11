@@ -1,7 +1,6 @@
 ﻿// JavaScript source code
 
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQEmwx6KHWzzdDpsSCw6LNg8LLwEE1eftKKSqycOOCWidYITkFOVDpmJ1meNcvSwE4-pzWr_/pub?gid=3600704&single=true&output=csv';
-const TAP_FIELDS =['Available','Tap Number','Type','Maker','Name','Style','ABV','Description','Price Info','Logo','Countries','Maker_JP','Name_JP','Description_JP','Standard Price Note']
 
 class TapItem {
     /**
