@@ -226,6 +226,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js" defer></script>
 <script>
+    window._lastUpdated = null;
+    window._lastDataUpdate = null;
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWA0cohQEmwx6KHWzzdDpsSCw6LNg8LLwEE1eftKKSqycOOCWidYITkFOVDpmJ1meNcvSwE4-pzWr_/pub?gid=0&single=true&output=csv';
 
     const memo = (fn) => { const cache = new Map(); return (k) => cache.has(k) ? cache.get(k) : (cache.set(k, fn(k)), cache.get(k)); };
@@ -360,14 +362,53 @@
         resizeRAF = requestAnimationFrame(scaleTapBoard);
     }
 
-    function renderRows(rows) {
-        const ciderColumn = byId('cider-column');
-        const beerColumn = byId('beer-column');
-        const ciderHeader = byId('tap-cider-header');
-        if (!ciderColumn || !beerColumn) return;
+    /**
+     * Retrieves the latest valid updated date from an array of row objects.
+     *
+     * @param {Array<Object>} rows - An array of objects, where each object may contain an 'Updated' field with a date value.
+     * @return {Date|null} The first valid updated date found in the rows, or null if no valid date is found or the input is invalid.
+     */
+    function getLatestUpdatedDate(rows) {
+        if (!Array.isArray(rows) || rows.length === 0) return null;
 
-        ciderColumn.innerHTML = '';
-        beerColumn.innerHTML = '';
+        const UPDATED_FIELD = 'Updated';
+
+        for (const row of rows) {
+            const value = row?.[UPDATED_FIELD];
+            const date = toValidDate(value);
+            if (date) return date;
+        }
+
+        return null;
+    }
+
+    /**
+     * Converts the given input to a valid Date object or returns null if the input is invalid.
+     *
+     * @param {*} input The value to be converted to a Date object. Can be a Date instance, a string, or any other value.
+     * @return {Date|null} A valid Date object if the input can be converted, or null if the input is invalid or cannot be converted.
+     */
+    function toValidDate(input) {
+        if (input instanceof Date) {
+            return Number.isNaN(input.getTime()) ? null : input;
+        }
+        if (input == null) return null;
+
+        const s = String(input).trim();
+        if (!s) return null;
+
+        const d = new Date(s);
+        return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    function renderRows(rows) {
+        const latestDataUpdate = getLatestUpdatedDate(rows);
+        if (window._lastDataUpdate && latestDataUpdate <= window._lastDataUpdate) {
+            window._lastUpdated = new Date();  // Update the last updated time to avoid triggering the watchdog.
+            return;
+        }
+
+        console.log('Rendering taps...');
 
         const defaultPrice = pickStandardPrice(rows);
 
@@ -384,11 +425,20 @@
             (/(cider)|(perry)/i.test(item.Type || '') ? ciderFrag : beerFrag).append(card);
         }
 
+        const ciderColumn = byId('cider-column');
+        const beerColumn = byId('beer-column');
+        const ciderHeader = byId('tap-cider-header');
+        if (!ciderColumn || !beerColumn) return;
+
+        ciderColumn.innerHTML = '';
+        beerColumn.innerHTML = '';
+
         ciderHeader.textContent = hasPerry ? 'CIDER & PERRY' : 'CIDER'
 
         ciderColumn.append(ciderFrag);
         beerColumn.append(beerFrag);
-        window._lastUpdated = new Date();
+        window._lastUpdated = new Date();  // Used by the watchdog to detect when the page has crashed.
+        window._lastDataUpdate = latestDataUpdate;  // Used to detect when the data itself has been updated.
         scheduleScale();
     }
 
